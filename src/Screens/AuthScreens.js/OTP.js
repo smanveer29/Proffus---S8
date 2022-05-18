@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 import { Colors } from '../../Helper/Colors';
@@ -25,6 +25,7 @@ const OTP = ({ confirm, screen, user, change }) => {
       })
     })
   }
+  
   const splitName = (() => {
     if (user) return user.name && user?.name.split(/(?<=^\S+)\s/)[0]
   })()
@@ -36,16 +37,22 @@ const OTP = ({ confirm, screen, user, change }) => {
           .then((userCredential) => {
             console.log(userCredential,'<<<')
             let body = {
-              username: "Test",
+              ph_number:`+91${user.phoneNumber}`,
               password: userCredential.user.uid
             }
-            axios.post('/auth/login', body)
+            axios.post('/auth/user/login', body)
               .then(res => {
                 console.log(res.data, "api res")
-                if (res.data.Success) {
+                if (res.data.success) {
                   storeUser({...res.data.user,token:res.data.token})
                   dispatch(userlogin({...res.data.user,token:res.data.token}))
+                }else{
+                  console.log(e,'api error')
+                  alert(e.error)
                 }
+              }).catch(e=>{
+                console.log(e,'api error')
+                alert('Server error: ' + e.message)
               })
           })
           .catch(err => console.error('Ignored sign out error: ', err)
@@ -62,21 +69,27 @@ const OTP = ({ confirm, screen, user, change }) => {
     try {
       const res = await auth.PhoneAuthProvider.credential(data.verificationId, flag)
       if (res) {
-        auth().signInWithCredential(res)
+        await auth().signInWithCredential(res)
           .then(response => {
+            console.log(response,'verify response')
             let body = {
               username: splitName,
-              email: user?.email,
-              ph_number: user?.phoneNumber,
-              name: user?.name,
-              password: response.user.uid
+              email: user.email,
+              ph_number: `+91${user.phoneNumber}`,
+              name: user.name,
+              password: response.user.uid,
+              // referal_code_other:''
             }
             axios.post('/auth/register', body)
               .then(res => {
                 console.log(res.data, "api res")
                 if (res.data.success) {
-                  storeUser({...res.data.user,token:res.data.token})
-                  dispatch(userlogin({...res.data.user,token:res.data.token}))
+                  storeUser({...res.data.data,token:res.data.token})
+                  dispatch(userlogin({...res.data.data,token:res.data.token}))
+                }
+                else{
+                  alert(res.data.error.ph_number)
+                  navigation.goBack()
                 }
               })
           })
@@ -124,7 +137,7 @@ const OTP = ({ confirm, screen, user, change }) => {
       <View style={{ marginTop: '20%', flexDirection: 'row', alignItems: 'flex-end' }}>
         <Text style={{ ...styles.text, fontSize: 17 }}>Resend </Text>
         <CountDown
-          until={3000}
+          until={30}
           size={20}
           onFinish={() => {
             alert('Session Expired Retry!!!')

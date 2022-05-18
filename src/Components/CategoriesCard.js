@@ -12,10 +12,8 @@ const CategoriesCard = (props) => {
     if (props !== null) {
         data = props.data
     }
-
-    console.log(data, "data")
     return (
-        <TouchableOpacity style={{ ...styles.cont }}
+        <TouchableOpacity style={{ ...styles.cont,width:subCategory?'30%':'100%'}}
             onPress={() => {
                 if (subCategory) {
                     navigation.navigate('SelectedSubCat', { selected: data?.scid })
@@ -26,10 +24,10 @@ const CategoriesCard = (props) => {
                 }
             }}
         >
-            <View style={{ borderWidth: 1, borderColor: Colors.primary, backgroundColor: '#fff', padding: 10, borderRadius: 15, elevation: 3 }}>
+            <View style={{ borderWidth: 1, borderColor: Colors.primary, backgroundColor: '#fff', padding: 10, borderRadius: 15, elevation: 3, }}>
                 <Image source={{ uri: data?.image }} style={{ width: 50, height: 50, borderRadius: 10, padding: 5, resizeMode: "cover" }} />
             </View>
-            <Text style={{ fontSize: 12, fontWeight: 'bold', paddingVertical: 5, color: 'black', textTransform: 'capitalize' }}>{data?.name}</Text>
+            <Text style={{height:50,fontSize: 12, fontWeight: 'bold', paddingVertical: 5, color: 'black', textTransform: 'capitalize',textAlign:'center' }}>{data?.name}</Text>
         </TouchableOpacity>
     );
 };
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
     cont: {
         marginHorizontal: 5,
         alignItems: "center",
-        justifyContent: 'center'
+        justifyContent: 'center',marginVertical:10
     },
     wrapCont: {
         width: '30%',

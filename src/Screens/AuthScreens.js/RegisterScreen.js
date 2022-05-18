@@ -25,7 +25,8 @@ const RegisterScreen = () => {
   }
   const register = async () => {
     setLoading(true)
-    await auth().signInWithPhoneNumber('+91' + data.phoneNumber, true)
+    try{
+      await auth().verifyPhoneNumber('+91' + data.phoneNumber,true)
       .then((res) => {
         console.log(res, "response");
         setUser(data)
@@ -37,6 +38,11 @@ const RegisterScreen = () => {
         alert(e)
         setLoading(false)
       })
+    }
+    catch(e)
+    {
+      console.log(e,'catche exception register')
+    }
   }
   return (
     <ImageBackground source={require('../../Assets/Images/bombaybg.png')} style={styles.cont}>

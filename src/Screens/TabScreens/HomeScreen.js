@@ -11,12 +11,17 @@ import BottomTab from '../../Components/BottomTab'
 import HomeTrendingCard from '../../Components/Home/HomeTrendingCard'
 import { useNavigation } from '@react-navigation/native'
 import axios from '../../utils/axios'
+import { selectUser } from '../../Redux/Reducers/userReducer'
+import { useSelector } from 'react-redux'
 
 const HomeScreen = () => {
     const navigation = useNavigation()
     const [loading, setLoading] = useState(true)
     const [categories, setCategories] = useState([])
     const [trending, setTrending] = useState([])
+    const user= useSelector(selectUser)
+
+    console.log(user,'redux user')
     useEffect(() => {
         getCategories()
         getTrendingServices()

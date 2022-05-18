@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native'
 
 const HomeTrendingCard = ({ data }) => {
    // const data=data.category
-   console.log(data,"tre")
    const navigation =useNavigation()
    return (
       <TouchableOpacity style={styles.main} onPress={()=>navigation.navigate('ServiceDetails',{data:data})}>
